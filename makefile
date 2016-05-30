@@ -18,7 +18,9 @@ default:
 install: ${TARGETS}
 
 ${TARGET_BIN}: ${SOURCE_BIN}
-	install -D $< $@
+	mkdir -p '${BIN_DIR}'
+	install '$<' '$@'
 
 ${TARGET_MAN}: ${SOURCE_MAN}
-	install -D $< $@
+	mkdir -p '${MAN_DIR}'
+	cp '$<' '$@'

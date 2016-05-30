@@ -1,0 +1,86 @@
+.\" Manpage for texcompile.
+.\" Contact roidocampo@gmail.com to correct errors or typos.
+.TH man 1 "30 May 2016" "0.1" "texcompile man page"
+.SH NAME
+texcompile \- simple utility for compilation of TeX files
+.SH SYNOPSIS
+.B texcompile 
+[-f] 
+<file>
+.SH DESCRIPTION
+.B texcompile
+is a simple script that aids in the compilation of TeX/LaTeX files. 
+.PP
+The script takes one mandatory argument: the (La)TeX source file to be
+compiled. It scans the file for configurations variables, and then it performs
+the compilation (unless the option '-f' was supplied, see below). The
+configuration variables are set using special comment lines in the TeX file.
+They have the form:
+
+	% TeXConfig: <variable> [arguments]
+
+The possible configuration variables and their meaning is explained below.
+.PP
+If the option \fB-f\fR is supplied no compilation is performed. Instead, the
+(La)TeX source is scanned and the full name of the main (La)TeX file is
+printed.
+.SH CONFIGURATION VARIABLES
+These are the possible configuration variables and their meaning:
+.TP
+.B pdflatex
+Use the program 'pdflatex' for compilation. This produces a 'pdf' output. This is
+the default mode for compilation.
+.TP
+.B latex
+Use the program 'latex' for compilation. This produces a 'dvi' output.
+.TP
+.B xelatex
+Use the program 'xelatex' for compilation. This produces a 'pdf' output.
+.TP
+.B lualatex
+Use the program 'lualatex' for compilation. This produces a 'pdf' output.
+.TP
+.B pdftex
+Use the program 'pdftex' for compilation. This produces a 'pdf' output.
+.TP
+.B tex
+Use the program 'tex' for compilation. This produces a 'dvi' output.
+.TP
+.B xetex
+Use the program 'xetex' for compilation. This produces a 'pdf' output.
+.TP
+.B luatex
+Use the program 'luatex' for compilation. This produces a 'pdf' output.
+.TP
+.B bibtex
+Run BibTeX.
+.TP
+.B biber
+Run Biber.
+.TP
+.B synctex [on|off]
+Turn SyncTeX 'on' or 'off'. The default is 'on'.
+.TP
+.B extra-options <options>
+Extra command-line options to be passed to the (La)TeX compiler.
+.TP
+.B aux-dir [dir]
+Put intermediate files for the (La)TeX compilation in the directory 'dir'. If
+no directory is provided, the default is 'dir=tex_aux'.
+.TP
+.B main-file <file-name>
+The main (La)TeX file. This is the file that should be compiled. If present,
+this should be the only configuration variable appearing in a file. Further
+configuration variables should appear in the main file.
+.TP
+.B make <make-target>
+Use make for compilation.
+.TP
+.B verbose
+Turn on verbose output.
+.SH SEE ALSO
+rubber(1), latexmk(1)
+.SH BUGS
+Plenty.
+.SH AUTHOR
+Roi Docampo (roidocampo@gmail.com)

@@ -22,8 +22,8 @@ They have the form:
 The possible configuration variables and their meaning are explained below.
 .PP
 If the option \fB-f\fR is supplied no compilation is performed. Instead, the
-(La)TeX source is scanned and the full name of the main (La)TeX file is
-printed.
+(La)TeX source is scanned and two full paths are printed: the main (La)TeX file
+and the PDF (or DVI) output file.
 .SH CONFIGURATION VARIABLES
 These are the possible configuration variables and their meaning:
 .TP
@@ -62,7 +62,9 @@ Run Biber.
 Turn SyncTeX 'on' or 'off'. The default is 'on'.
 .TP
 .B extra-options <options>
-Extra command-line options to be passed to the (La)TeX compiler.
+Extra command-line options to be passed to the (La)TeX compiler. A common
+option to provide is '-jobname=<something>', to change the name of the produced
+pdf (or dvi) file.
 .TP
 .B aux-dir [dir]
 Put intermediate files for the (La)TeX compilation in the directory 'dir'. If
@@ -72,6 +74,10 @@ no directory is provided, the default is 'dir=tex_aux'.
 The main (La)TeX file. This is the file that should be compiled. If present,
 this should be the only configuration variable appearing in a file. Further
 configuration variables should appear in the main file.
+.TP
+.B job-name <name>
+Set the job name for the (La)TeX compilation. Equivalent to 
+adding '-jobname=<name>' to the extra options.
 .TP
 .B make <make-target>
 Use make for compilation.

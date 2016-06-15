@@ -19,6 +19,10 @@ class TeXCompiler(object):
             compiler = cls(file, silent=True)
             compiler.parse_config()
             print compiler.file_path
+            target_file = os.path.join(
+                os.path.dirname(compiler.file_path),
+                compiler.job_name + "." + compiler.tex_mode)
+            print target_file
         else:
             file = sys.argv[1]
             compiler = cls(file)
@@ -44,6 +48,7 @@ class TeXCompiler(object):
         self.file_path = os.path.abspath(self.file)
         self.file_fullname = os.path.basename(self.file_path)
         self.file_name, self.file_ext = os.path.splitext(self.file_fullname)
+        self.job_name = self.file_name
         self.file_dir = os.path.dirname(self.file_path)
         self.tex_command = "pdflatex"
         self.tex_mode = "pdf"
@@ -131,9 +136,17 @@ class TeXCompiler(object):
                 elif arg in ["off", "no", "false"]:
                     self.use_synctex = False
 
+            elif option in ["jobname", "job-name"]:
+                self.tex_extra_options.append("-jobname=" + arg)
+                self.job_name = arg
+
             elif option in ["options", "args", "arguments", "extraoptions",
                             "extra_options", "extra-options"]:
-                self.tex_extra_options += args.split()
+                self.tex_extra_options += arg.split()
+                for extra_option in self.tex_extra_options:
+                    eo_head, eo_tail = extra_option.split("=")
+                    if eo_head == "-jobname":
+                        self.job_name = eo_tail
 
             elif option == "bibtex":
                 self.use_bib = True
@@ -155,9 +168,9 @@ class TeXCompiler(object):
 
     def set_tex_options(self):
         self.tex_options = ["-interaction=nonstopmode"]
-        self.aux_file = self.file_name + ".aux"
-        self.bbl_file = self.file_name + ".bbl"
-        self.log_file = self.file_name + ".log"
+        self.aux_file = self.job_name + ".aux"
+        self.bbl_file = self.job_name + ".bbl"
+        self.log_file = self.job_name + ".log"
         if self.tex_mode != "pdf":
             self.use_synctex = False
         if self.use_synctex:
@@ -229,7 +242,7 @@ class TeXCompiler(object):
             if needs_bib and self.use_bib and run_count==1:
                 print "Running %s" % self.bib_engine_name
                 sys.stdout.flush()
-                full_bib_command = [self.bib_command, self.file_name]
+                full_bib_command = [self.bib_command, self.job_name]
                 if os.path.exists(self.bbl_file):
                     with open(self.bbl_file) as bbl_file:
                         prev_bbl = bbl_file.read()
@@ -281,7 +294,7 @@ class TeXCompiler(object):
         aux_extensions = [".aux", ".log", ".toc", ".bbl", ".brf", ".out",
                           ".blg", ".nav", ".snm", ".vrb", ".bcf", ".run.xml"] # ".synctex.gz"
         for ext in aux_extensions:
-            file1 = self.file_name + ext
+            file1 = self.job_name + ext
             file2 = os.path.join(self.aux_dir, file1)
             if direction == "to_aux_dir":
                 if os.path.exists(file1):

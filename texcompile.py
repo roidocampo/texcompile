@@ -1,5 +1,6 @@
 #!/usr/bin/env python2
 
+import __builtin__
 import glob
 import os
 import os.path
@@ -9,6 +10,11 @@ import string
 import subprocess
 import sys
 
+def open(file_name, *args, **kws):
+    if args or kws:
+        return __builtin__.open(file_name, *args, **kws)
+    else:
+        return __builtin__.open(file_name, "rU")
 
 class TeXCompiler(object):
 

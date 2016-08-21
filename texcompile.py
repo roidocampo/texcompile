@@ -1,6 +1,5 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python3
 
-import __builtin__
 import glob
 import os
 import os.path
@@ -10,12 +9,6 @@ import string
 import subprocess
 import sys
 
-def open(file_name, *args, **kws):
-    if args or kws:
-        return __builtin__.open(file_name, *args, **kws)
-    else:
-        return __builtin__.open(file_name, "rU")
-
 class TeXCompiler(object):
 
     @classmethod
@@ -24,11 +17,11 @@ class TeXCompiler(object):
             file = sys.argv[2]
             compiler = cls(file, silent=True)
             compiler.parse_config()
-            print compiler.file_path
+            print(compiler.file_path)
             target_file = os.path.join(
                 os.path.dirname(compiler.file_path),
                 compiler.job_name + "." + compiler.tex_mode)
-            print target_file
+            print(target_file)
         else:
             file = sys.argv[1]
             compiler = cls(file)
@@ -89,13 +82,13 @@ class TeXCompiler(object):
             if option in ["main", "mainfile", "main_file", "main-file"]:
                 self.file = arg
                 if not self.silent:
-                    print "Using main project file `%s`" % self.file
+                    print("Using main project file `%s`" % self.file)
                 self.parse_config()
                 return False
 
             elif option == "verbose":
                 if not self.silent:
-                    print "Verbose output on"
+                    print("Verbose output on")
                 self.verbose = True
 
             elif option == "make":
@@ -186,33 +179,33 @@ class TeXCompiler(object):
             self.tex_extra_options + [self.file_name])
 
     def run(self):
-        print "="*70
-        print "TeXCompile"
-        print "-"*70
-        print "Using file `%s`" % self.file
+        print("="*70)
+        print("TeXCompile")
+        print("-"*70)
+        print("Using file `%s`" % self.file)
         self.parse_config()
         self.set_tex_options()
         if self.use_aux_dir:
-            print "Using aux directory `%s`" % self.aux_dir
+            print("Using aux directory `%s`" % self.aux_dir)
         if self.use_make:
             self.run_make()
         else:
             if self.verbose and self.use_synctex:
-                print "Using SyncTeX"
+                print("Using SyncTeX")
             self.run_tex()
         has_errors = self.print_errors()
-        print "="*70
+        print("="*70)
         return has_errors
 
     def run_tex(self):
         if self.verbose:
             tcmd = " ".join(self.full_tex_command)
-            print "The full TeX command is\n$ %s" % tcmd
+            print("The full TeX command is\n$ %s" % tcmd)
         if self.use_aux_dir:
             if os.path.exists(self.aux_dir):
                 if not os.path.isdir(self.aux_dir):
-                    print "%s: Error. Cannot use aux-dir ($s)" % (self.file,
-                                                                  self.aux_dir) 
+                    print("%s: Error. Cannot use aux-dir ($s)" % (self.file,
+                                                                  self.aux_dir)) 
                     return
             else:
                 os.mkdir(self.aux_dir)
@@ -224,11 +217,11 @@ class TeXCompiler(object):
             needs_rerun = False
             run_count += 1
             if run_count == 1:
-                print "Running %s" % self.tex_engine_name
+                print("Running %s" % self.tex_engine_name)
                 sys.stdout.flush()
             else:
-                print "Running %s (pass %s)" % (self.tex_engine_name,
-                                                run_count)
+                print("Running %s (pass %s)" % (self.tex_engine_name,
+                                                run_count))
                 sys.stdout.flush()
             tex_proc = subprocess.Popen(
                 self.full_tex_command,
@@ -237,16 +230,16 @@ class TeXCompiler(object):
             tex_retcode = tex_proc.wait()
             if tex_retcode != 0:
                 if self.verbose:
-                    print ("Error occurred when running %s" %
-                           self.tex_engine_name)
+                    print(("Error occurred when running %s" %
+                           self.tex_engine_name))
                 error_ocurred = True
                 break
             needs_rerun, needs_bib = self.parse_log_file()
             if (self.verbose and self.use_bib 
                     and run_count==1 and not needs_bib):
-                print "No need to run %s" % self.bib_engine_name
+                print("No need to run %s" % self.bib_engine_name)
             if needs_bib and self.use_bib and run_count==1:
-                print "Running %s" % self.bib_engine_name
+                print("Running %s" % self.bib_engine_name)
                 sys.stdout.flush()
                 full_bib_command = [self.bib_command, self.job_name]
                 if os.path.exists(self.bbl_file):
@@ -261,8 +254,8 @@ class TeXCompiler(object):
                 bib_retcode = bib_proc.wait()
                 if bib_retcode != 0:
                     if self.verbose:
-                        print ("Error occurred when running %s" %
-                               self.bib_engine_name)
+                        print(("Error occurred when running %s" %
+                               self.bib_engine_name))
                     error_ocurred = True
                     break
                 if os.path.exists(self.bbl_file):
@@ -273,14 +266,14 @@ class TeXCompiler(object):
                 if prev_bbl != new_bbl:
                     needs_rerun = True
                 elif self.verbose:
-                    print ("No need to rerun %s, bbl file did not change." %
-                           self.tex_engine_name)
+                    print(("No need to rerun %s, bbl file did not change." %
+                           self.tex_engine_name))
         if self.use_aux_dir:
             self.move_files_to_aux_dir()
 
     def parse_log_file(self):
         if self.verbose:
-            print "Processing log file `%s`" % self.log_file
+            print("Processing log file `%s`" % self.log_file)
         needs_rerun = False
         needs_bib = False
         with open(self.log_file) as log_file:
@@ -291,9 +284,9 @@ class TeXCompiler(object):
                     needs_bib = True
         if self.verbose:
             if needs_rerun:
-                print "Found `Rerun to get cross-references right`"
+                print("Found `Rerun to get cross-references right`")
             if needs_bib:
-                print "Found `There were undefined references`"
+                print("Found `There were undefined references`")
         return needs_rerun, needs_bib
 
     def move_aux_files(self, direction):
@@ -305,32 +298,32 @@ class TeXCompiler(object):
             if direction == "to_aux_dir":
                 if os.path.exists(file1):
                     if self.verbose:
-                        print "Moving `%s` to `%s`" %(file1,file2)
+                        print("Moving `%s` to `%s`" %(file1,file2))
                     os.rename(file1, file2)
             elif direction == "from_aux_dir":
                 if not os.path.exists(file1):
                     if os.path.exists(file2):
                         if self.verbose:
-                            print "Moving `%s` to `%s`" %(file2,file1)
+                            print("Moving `%s` to `%s`" %(file2,file1))
                         os.rename(file2, file1)
 
     def move_files_to_aux_dir(self):
         if self.verbose:
-            print "Moving files to aux dir"
+            print("Moving files to aux dir")
         self.move_aux_files("to_aux_dir")
 
     def move_files_from_aux_dir(self):
         if self.verbose:
-            print "Moving files from aux dir"
+            print("Moving files from aux dir")
         self.move_aux_files("from_aux_dir")
 
     def run_make(self):
         if self.make_target:
-            print "Running Makefile (target `%s`)" % self.make_target
+            print("Running Makefile (target `%s`)" % self.make_target)
             sys.stdout.flush()
             make_command = ["make", self.make_target]
         else:
-            print "Running Makefile (no target specified, using default)"
+            print("Running Makefile (no target specified, using default)")
             sys.stdout.flush()
             make_command = ["make"]
         make_proc = subprocess.Popen(make_command)
@@ -345,7 +338,7 @@ class TeXCompiler(object):
         has_errors = False
         for i,error in enumerate(log.get_errors()):
             if i==0:
-                print "-"*70
+                print("-"*70)
             self.print_one_error(error)
             has_errors = True
         return has_errors
@@ -356,23 +349,23 @@ class TeXCompiler(object):
             text = error["text"]
         else:
             text = ""
-        if where.has_key("file") and where["file"] is not None:
+        if "file" in where and where["file"] is not None:
             pos = self.simplify_path(where["file"])
-            if where.has_key("line") and where["line"]:
+            if "line" in where and where["line"]:
                 pos = "%s:%d" % (pos, int(where["line"]))
-                if where.has_key("last"):
+                if "last" in where:
                     if where["last"] != where["line"]:
                         pos = "%s-%d" % (pos, int(where["last"]))
             pos = pos + ": "
         else:
             pos = ""
-        if where.has_key("macro"):
+        if "macro" in where:
             text = "%s (in macro %s)" % (text, where["macro"])
-        if where.has_key("page"):
+        if "page" in where:
             text = "%s (page %d)" % (text, int(where["page"]))
-        if where.has_key("pkg"):
+        if "pkg" in where:
             text = "[%s] %s" % (where["pkg"], text)
-        print pos + text
+        print(pos + text)
         sys.stdout.flush()
 
     def simplify_path(self, name):
@@ -547,7 +540,7 @@ class LogCheck (object):
                     m = re_cseq.match(line)
                     if m:
                         seq = m.group("seq")
-                        if cseqs.has_key(seq):
+                        if seq in cseqs:
                             error = None
                         else:
                             cseqs[seq] = None
@@ -576,7 +569,7 @@ class LogCheck (object):
                         m = re_ignored.search(error)
                         if m:
                             d["file"] = last_file
-                            if d.has_key("code"):
+                            if "code" in d:
                                 del d["code"]
                             d.update( m.groupdict() )
                         elif pos[-1] is None:

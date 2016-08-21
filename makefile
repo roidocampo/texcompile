@@ -14,6 +14,7 @@ TARGET_MAN = ${MAN_DIR}/${NAME}.1
 TARGETS = ${TARGET_BIN} ${TARGET_MAN}
 
 default:
+	@echo Make what? You probably want \`make install\'.
 
 install: ${TARGETS}
 

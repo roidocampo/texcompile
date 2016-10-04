@@ -5,7 +5,6 @@ import os
 import os.path
 import re
 import shutil
-import string
 import subprocess
 import sys
 
@@ -460,7 +459,7 @@ class LogCheck (object):
                 # sometimes issues warnings (like undefined references) in the
                 # form of errors...
 
-                if string.find(line, "pdfTeX warning") == -1:
+                if line.find("pdfTeX warning") == -1:
                     return 1
         return 0
 
@@ -552,7 +551,7 @@ class LogCheck (object):
                 if m:
                     parsing = 0
                     skipping = 1
-                    pdfTeX = string.find(line, "pdfTeX warning") != -1
+                    pdfTeX = line.find("pdfTeX warning") != -1
                     if error is not None and ((pdfTeX and warnings) or (errors and not pdfTeX)):
                         if pdfTeX:
                             d = {
@@ -617,7 +616,7 @@ class LogCheck (object):
 
             if prefix is not None:
                 if line[:len(prefix)] == prefix:
-                    text.append(string.strip(line[len(prefix):]))
+                    text.append(line[len(prefix):].strip())
                 else:
                     text = " ".join(text)
                     m = re_online.search(text)

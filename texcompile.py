@@ -59,6 +59,7 @@ class TeXCompiler(object):
         self.make_target = None
         self.bib_command = None
         self.bib_engine_name = None
+        self.bib_file = None
         self.aux_dir = None
 
     def parse_config(self):
@@ -154,6 +155,13 @@ class TeXCompiler(object):
                 self.use_bib = True
                 self.bib_command = "biber"
                 self.bib_engine_name = "Biber"
+            elif option in ["bibtexfile", "bibtex-file", "bibtex_file",
+                            "bibfile", "bib-file", "bib_file"]:
+                self.bib_file = arg
+                if not self.use_bib:
+                    self.use_bib = True
+                    self.bib_command = "bibtex"
+                    self.bib_engine_name = "BibTeX"
 
             elif option in ["auxdir", "aux_dir", "aux-dir"]:
                 self.use_aux_dir = True
@@ -234,6 +242,13 @@ class TeXCompiler(object):
                 error_ocurred = True
                 break
             needs_rerun, needs_bib = self.parse_log_file()
+            if not needs_bib and self.bib_file is not None:
+                if (os.path.exists(self.bib_file) and
+                        os.path.exists(self.bbl_file)):
+                    bib_time = os.path.getmtime(self.bib_file)
+                    bbl_time = os.path.getmtime(self.bbl_file)
+                    if bib_time > bbl_time:
+                        needs_bib = True
             if (self.verbose and self.use_bib 
                     and run_count==1 and not needs_bib):
                 print("No need to run %s" % self.bib_engine_name)

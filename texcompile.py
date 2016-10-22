@@ -290,7 +290,7 @@ class TeXCompiler(object):
             print("Processing log file `%s`" % self.log_file)
         needs_rerun = False
         needs_bib = False
-        with open(self.log_file) as log_file:
+        with open(self.log_file, encoding='latin1') as log_file:
             for line in log_file:
                 if "Rerun to get cross-references right" in line:
                     needs_rerun = True
@@ -438,7 +438,7 @@ class LogCheck (object):
         """
         self.lines = None
         try:
-            file = open(name)
+            file = open(name, encoding="latin1")
         except IOError:
             return 2
         line = file.readline()

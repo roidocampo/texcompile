@@ -305,7 +305,8 @@ class TeXCompiler(object):
 
     def move_aux_files(self, direction):
         aux_extensions = [".aux", ".log", ".toc", ".bbl", ".brf", ".out",
-                          ".blg", ".nav", ".snm", ".vrb", ".bcf", ".run.xml"] # ".synctex.gz"
+                          ".blg", ".nav", ".snm", ".vrb", ".bcf", ".run.xml",
+                          ".spl"] # ".synctex.gz"
         for ext in aux_extensions:
             file1 = self.job_name + ext
             file2 = os.path.join(self.aux_dir, file1)

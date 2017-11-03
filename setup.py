@@ -5,7 +5,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='texcompile',
-    version='0.4',
+    version='0.5',
     description='Simple script for compilation of TeX/LaTeX files',
     url='https://github.com/pypa/sampleproject',
 

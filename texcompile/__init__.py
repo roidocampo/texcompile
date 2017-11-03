@@ -762,6 +762,9 @@ class LogCheck (object):
 # Main
 ########################################################################
 
-if __name__ == "__main__":
+def main():
     TeXCompiler.main()
+
+if __name__ == "__main__":
+    main()
 

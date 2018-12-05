@@ -143,9 +143,10 @@ class TeXCompiler(object):
                             "extra_options", "extra-options"]:
                 self.tex_extra_options += arg.split()
                 for extra_option in self.tex_extra_options:
-                    eo_head, eo_tail = extra_option.split("=")
-                    if eo_head == "-jobname":
-                        self.job_name = eo_tail
+                    if "=" in extra_option:
+                        eo_head, eo_tail = extra_option.split("=")
+                        if eo_head == "-jobname":
+                            self.job_name = eo_tail
 
             elif option == "bibtex":
                 self.use_bib = True
